@@ -9,7 +9,7 @@
 % https://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b05697
 % Jixin Chen, Joseph R Pyle, Kurt Waldo Sy Piecco, Anatoly B Kolomeisky,
 % Christy F Landes, A Two-Step Method for smFRET Data Analysis, 
-% J. Phys. Chem. B, 2016, 120 (29), pp 7128–7132
+% J. Phys. Chem. B, 2016, 120 (29), pp 7128â€“7132
 
 % Copyright (c) 2018 Jixin Chen @ Ohio University
 % 
@@ -84,7 +84,7 @@
     %------------------and start fitting:------------------------
     [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess, bounds, option);
     
-    display('---------------fitting results in variable yfit and residual -----------')
+    display('--------------plot fitting results (x,y), (xfit, yfit), and residual -----------');
     display(parafinal);
     fprintf(['\n r square = ', num2str(rsq), '\n']);
     fprintf(['\n chi square = ', num2str(chisq), '\n']);
