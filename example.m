@@ -73,8 +73,8 @@
     bounds = [0, 0.1, 0, 0.1, -0.1;   % lower boundary
               1, 2000, 1, 20000, 0.2]; % upper boundary
     %-------------------------------
-    if option.accuracy > min(paraGuess)/1E4
-        option.accuracy = min(paraGuess)/1E4;
+    if option.accuracy > min(abs(paraGuess))/1E4
+        option.accuracy = min(abs(paraGuess))/1E4;
     end % to accomodate for the acuracy requirment of the smallest parameter. Set the search mininum 1E-4* the smallest parameter.
     
 
