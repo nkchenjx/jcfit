@@ -9,7 +9,7 @@
 % https://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b05697
 % Jixin Chen, Joseph R Pyle, Kurt Waldo Sy Piecco, Anatoly B Kolomeisky,
 % Christy F Landes, A Two-Step Method for smFRET Data Analysis, 
-% J. Phys. Chem. B, 2016, 120 (29), pp 7128–7132
+% J. Phys. Chem. B, 2016, 120 (29), pp 7128â€“7132
 
 
 % Copyright (c) 2018 Jixin Chen @ Ohio University
@@ -206,7 +206,8 @@ function [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess,
 
 end
 
-%% custum your own model here for any functions including global fitting functions or multiple peak functions
+%% custum your own model here for any functions including global fitting functions or multiple peak functions. 
+% This is for 1D data. 2D and 3D data will need some modifications.
 %------------------ Fitting model -----------------------------------------
 function [Yguess] = mdl(para, x) 
 % Yguess = para(1)*exp(-x/para(2));
