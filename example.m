@@ -57,7 +57,7 @@
     y = y/m; 
     figure; plot(x,y); title('treated data'); 
 
-    %------------END of loading data: x and y in row vectors--------
+    %------------END of loading data: x and y in clumn vectors--------
     
     % set fitting options
     option.maxiteration = 10;  % number of iteration fixed, the fitting will stop either this iteration or convergence reached first 
