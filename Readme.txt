@@ -1,4 +1,6 @@
-Run 'example.m'
+Curve fitting for 1D vector with any given model equations.
+
+Run 'example.m' for an example
 change your fitting model in the function 'mdl' in 'jcfitf.m' 
 
 cite:
