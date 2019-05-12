@@ -115,7 +115,7 @@ function [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess,
     %------------SearchExpScale is very important, the smaller the more
     %exhaustive searching with more time consuming------------------
     if ~isfield(option,'searchExpScale')
-     option.searchExpScale = 0.5; % default guessing spacing is n*exp(0.5)*accuracy times from the initial guess, where n is number of guesses away from the initial guess.
+     option.searchExpScale = 0.5; % default guessing spacing is accuracy*(exp(0.5))^n times from the initial guess, where n is number of guesses away from the initial guess.
      disp('set default search space to be exp(0.5)');
     end
     maxiteration = option.maxiteration;
