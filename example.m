@@ -1,4 +1,3 @@
-% All rights reserved by Jixin Chen
 % First coding: 2016/04/05 by Jixin Chen @ Department of Chemistry and Biochemistry, Ohio University
 % 20170110 Jixin Chen modified it to a function
 % 20180609 Jixin Chen simplified it into single curve fitting
