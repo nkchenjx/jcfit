@@ -11,8 +11,9 @@ A semi-exhaustive and brutal searching algorithm using the least-square method t
 
 The fitting time of each iterature is scaled with the number of parameters and the accuracy of the fitting. Each parameter is searched one by one within its boundaries. Thus a P^N question is reduced to PN with a cost of losing space coverage.
 
-The code can be changed to fit multiple curves globally by introduce different models or a model calls different parameters.
-an example can be find at:
+The code can be changed to fit multiple curves globally by introducing different modles for different curves using the same parameters.
+
+An example can be find at:
 
 Juvinch R. Vicente, Ali Rafiei Miandashti, Kurt Sy Piecco, Joseph R. Pyle, Martin E. Kordesch, Jixin Chen*, Single-Particle Organolead Halide Perovskite Photoluminescence as a Probe for Surface Reaction Kinetics. ACS Applied Matierals & Interfaces, 2019, 11(19), 18034-18043.
 
