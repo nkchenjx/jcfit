@@ -64,8 +64,8 @@
 
     % ----------------Attn: change below for different fitting equations-----------------
     % set the fitting equation to double exponential decay with a base line
-    mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5);
-    % equation grammar: modle name 'mdl' use as function y = mdl(para, x), the rest is the equation.
+   % mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5);
+    % equation grammar: model name 'mdl' use as function y = mdl(para, x), the rest is the equation.
     % you can also generate a function to replace the above equation: 
     % function newy = mdl(para, x)
     
@@ -84,7 +84,8 @@
     %--------------END of fitting option setting, equation, initial guess, and 
 
     %------------------and start fitting:------------------------
-    [parafinal, yfit, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
+    % [parafinal, yfit, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
+    [parafinal, yfit, chisq, rsq] = jcfitf(x, y, paraGuess, bounds, option);
     fprintf(['\n rsq = ', num2str(rsq), '\n']);
     % parafinal is the fitted results; yfit is the fittered curve; 
     % use residual = y-yfit; to get the residual
