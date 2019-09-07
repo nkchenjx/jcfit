@@ -38,7 +38,7 @@
 
     x1 = exampledata_x'; % a cln vector
     y1 = exampledata_y'; % a cln vector
-      
+    % one can load (x2,y2), (x3, y3),... and they can use the same model or different models that share the same set of fitting parameters, i.e. global fitting.  
     
     %-------% the rest can be a double expnential function which only need feed
     % with x and y data.---------------------------
