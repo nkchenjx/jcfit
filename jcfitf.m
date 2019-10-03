@@ -212,7 +212,8 @@ end
 function [Yguess] = mdl(para, x) 
 % Yguess = para(1)*exp(-x/para(2));
 mdl2 = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5);
-
+% model can be very complicated and different model using the same set of parameters can be used for different curves when fit globally.
+% Similar to bitcorn mining when the complicated hash function is used.
 Yguess = mdl2(para, x);
 end
 % by Jixin Chen
