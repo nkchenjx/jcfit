@@ -3,13 +3,14 @@
 % 20170110 Jixin Chen modified it to a function
 % 20180609 Jixin Chen simplified it into single curve fitting
 % 20190426 Jixin Chen package it onto GitHub
+% 20200617 Jixin Chen add fitting error analysis
 
 %-----------------------------------
 % For publications please cite: 
 % https://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b05697
 % Jixin Chen, Joseph R Pyle, Kurt Waldo Sy Piecco, Anatoly B Kolomeisky,
 % Christy F Landes, A Two-Step Method for smFRET Data Analysis, 
-% J. Phys. Chem. B, 2016, 120 (29), pp 7128–7132
+% J. Phys. Chem. B, 2016, 120 (29), pp 7128â€“7132
 
 
 % Copyright (c) 2018 Jixin Chen @ Ohio University
