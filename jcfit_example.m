@@ -1,0 +1,56 @@
+    load('jcfitExampleData.mat');
+
+    x1 = exampledata_x; % a row vector
+    y1 = exampledata_y; % a row vector
+      
+    
+    %% -------% the rest can be a double expnential function which only need feed
+    % with x and y data.---------------------------
+    
+    %function [parafinal, rsq] = yournamedoubleExp(x1,y1)
+    
+    figure; plot(x1,y1); title('raw data');
+    % this is a double exponential decay curve that have a dark part
+    % find time 0 and remove the data before it starts, and normalize the curve 
+    [m,ind] = max(y1);
+    l = length(y1);
+    x = x1-x1(ind);
+    x = x(ind:l);
+    y = y1(ind:l);
+    y = y/m; 
+    figure; plot(x,y); title('treated data'); 
+
+    %------------END of loading data: x and y in row vectors--------
+    
+    % set fitting options
+    option.maxiteration = 10;  % number of iteration fixed, the fitting will stop either this iteration or convergence reached first 
+    option.accuracy = 0.0001;  % best searching accuracy, fraction of guessed value
+    option.convgtest = 1e-10; % difference between two iterations on the square difference between fitting and data.
+
+    % ----------------Attn: change below for different fitting equations-----------------
+    % set the fitting equation to double exponential decay with a base line
+    mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5);
+    % equation grammar: modle name 'mdl' use as function y = mdl(para, x), the rest is the equation.
+    % you can also generate a function to replace the above equation: 
+    % function newy = mdl(para, x)
+    
+    % initial guess
+    paraGuess = [0.5, 10, 0.5, 100, 0.1];  % A1, tau1,  A2, tau2, baseline
+    % boundarys
+    bounds = [0, 0.1, 0, 0.1, -0.1;   % lower boundary
+              1, 2000, 1, 20000, 0.2]; % upper boundary
+    %-------------------------------
+
+    d1 = paraGuess-bounds(1,:);
+    d2 = bounds(2,:)-paraGuess;
+    if prod(d1)*prod(d2)<=0
+        display('WARNING: initial guess out of boundary');
+    end
+    %--------------END of fitting option setting, equation, initial guess, and 
+
+    %------------------and start fitting:------------------------
+    [parafinal, yfit, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
+    fprintf(['\n rsq = ', num2str(rsq), '\n']);
+    % parafinal is the fitted results; yfit is the fittered curve; 
+    % use residual = y-yfit; to get the residual
+    % rsq: root mean sqare value best will be close to 1
