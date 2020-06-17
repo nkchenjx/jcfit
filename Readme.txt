@@ -9,7 +9,7 @@ Jixin Chen, Joseph R Pyle, Kurt Waldo Sy Piecco, Anatoly B Kolomeisky, Christy F
 
 A semi-exhaustive and brutal searching algorithm using the least-square method to find the best fit of a curve. The least-square mehtod can be changed easily to other residual treatment methods.
 
-The fitting time of each iterature is scaled with the number of parameters and the accuracy of the fitting. Each parameter is searched one by one within its boundaries. Thus a P^N question is reduced to PN with a cost of losing space coverage.
+The fitting time of each iterature is scaled with the number of parameters of the fitting, the search speed is not verysensitive to the accuracy because the exponential searching spacing design. Each parameter is searched one by one within its boundaries. Thus a P^N question is reduced to PN with a cost of losing space coverage.
 
 The code can be changed to fit multiple curves globally by introducing different modles for different curves using the same parameters.
 
