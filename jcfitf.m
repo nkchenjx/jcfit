@@ -1,3 +1,4 @@
+% by Jixin Chen
 % First coding: 2016/04/05 by Jixin Chen @ Department of Chemistry and Biochemistry, Ohio University
 % 20170110 Jixin Chen modified it to a function
 % 20180609 Jixin Chen simplified it into single curve fitting
@@ -8,7 +9,7 @@
 % https://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b05697
 % Jixin Chen, Joseph R Pyle, Kurt Waldo Sy Piecco, Anatoly B Kolomeisky,
 % Christy F Landes, A Two-Step Method for smFRET Data Analysis, 
-% J. Phys. Chem. B, 2016, 120 (29), pp 7128â€“7132
+% J. Phys. Chem. B, 2016, 120 (29), pp 7128–7132
 
 
 % Copyright (c) 2018 Jixin Chen @ Ohio University
@@ -33,7 +34,7 @@
 
 %% an example for double exponential decay fitting of a single curve.
 %{
-    load('jcfitExampleData.mat');
+  %  load('jcfitExampleData.mat');
 
     x1 = exampledata_x; % a row vector
     y1 = exampledata_y; % a row vector
@@ -64,8 +65,8 @@
 
     % ----------------Attn: change below for different fitting equations-----------------
     % set the fitting equation to double exponential decay with a base line
-   % mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5);
-    % equation grammar: model name 'mdl' use as function y = mdl(para, x), the rest is the equation.
+    mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5);
+    % equation grammar: modle name 'mdl' use as function y = mdl(para, x), the rest is the equation.
     % you can also generate a function to replace the above equation: 
     % function newy = mdl(para, x)
     
@@ -84,8 +85,7 @@
     %--------------END of fitting option setting, equation, initial guess, and 
 
     %------------------and start fitting:------------------------
-    % [parafinal, yfit, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
-    [parafinal, yfit, chisq, rsq] = jcfitf(x, y, paraGuess, bounds, option);
+    [parafinal, yfit, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
     fprintf(['\n rsq = ', num2str(rsq), '\n']);
     % parafinal is the fitted results; yfit is the fittered curve; 
     % use residual = y-yfit; to get the residual
@@ -93,8 +93,9 @@
 %}
 
 
+
 %% main function with data error bar not fitted
-function [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess, bounds, option)
+function [parafinal2, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess, bounds, option)
     % load options
     if ~isfield(option,'maxiteration')
      option.maxiteration = 50;  % number of iteration fixed
@@ -115,7 +116,7 @@ function [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess,
     %------------SearchExpScale is very important, the smaller the more
     %exhaustive searching with more time consuming------------------
     if ~isfield(option,'searchExpScale')
-     option.searchExpScale = 0.5; % default guessing spacing is accuracy*(exp(0.5))^n times from the initial guess, where n is number of guesses away from the initial guess.
+     option.searchExpScale = 0.5; % default guessing spacing is n*exp(0.5)*accuracy times from the initial guess, where n is number of guesses away from the initial guess.
      disp('set default search space to be exp(0.5)');
     end
     maxiteration = option.maxiteration;
@@ -137,6 +138,12 @@ function [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess,
          for i = 1:length(paraGuess) % scan each parameter
              %set the scanning scale withing the boundary.
             p = para(i);
+%             accuracy = option.accuracy(i); % if accuracy is a vector for each parameter
+%             if abs(p) > option.accuracy
+%                 accuracy = abs(p)*option.accuracy;
+%             else
+%                 accuracy = option.accuracy;
+%             end
             lb = bounds(1, i);
             ub = bounds(2, i);
             ll = p-lb;
@@ -204,16 +211,122 @@ function [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess,
     ax.FontSize = 20;
     ax.FontWeight = 'Bold';
 
+    [parafinal2, error, chisq, rsq] = finderror(x, y, para, bounds, accuracy);
+    
 end
 
-%% custum your own model here for any functions including global fitting functions or multiple peak functions. 
-% This is for 1D data. 2D and 3D data will need some modifications.
+
+function [parafinal2,error, chisq, rsq] = finderror(x, y, para, bounds, accuracy)
+% parafinal structure: parameter, lower boundary, upper bounday at 95
+% confidence 2 sigma.
+% error structure: upper error and lower error. Take the average as the
+% final for 1 sigma.
+%accuracy = accuracy*10;
+
+num_para = length(para);
+
+chisq = 0;
+rsq = 0;
+
+
+yfit =  mdl(para, x);
+ 
+ residual = y - yfit;
+ a = (y - yfit).^2./yfit;
+ a(isinf(a)) = 0;
+ chisq = sum(a);
+ meany = mean(y);
+ sumy =  sum((y-meany).^2);
+ N =  length(x);
+
+ 
+sumr = sum(residual(:).^2);
+rsq = 1- sumr/sumy;
+
+sigma = sqrt(sumr/N);
+% meanrsd = mean(residual(:));
+
+% upper bounds
+% usigma = zeros(num_para);
+for i = 1: num_para
+    parau = para;
+    p = parau(i);
+    ub = bounds(2,i);
+    ul = ub-p;
+    nu = 1:0.2:floor(log2(ul/accuracy+1));
+    ps = [p, p+2.^nu*accuracy, ub];
+    sigmau = [];
+    for f = 1: length(ps)
+       parau(i) = ps(f);
+     %   esqu(i) = 0;
+
+      yfitu = mdl(parau, x);
+   
+      %%% -------------------- use y + y_error as upper limit if y_error is
+      %%% avaailable (this idea needs reference and justification):    
+      residualu =  y - yfitu;
+ %     residualu = y+y_error - yfitu; %------------------------
+       %    esqu(i) = esqu(i) + sum((yfitu{j} -y).^2);
+      sigmau(f) = sqrt(sum(residualu(:).^2)/N);
+    end
+    a = abs(sigmau - sigma);
+    b1 = abs(a - 1*sigma/sqrt(N-num_para)); % 66% confidence level 1 sigma
+    b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
+    [c1, ind1] = min(b1);
+    [c2, ind2] = min(b2);
+    upbounds(i) = ps(ind2(1));
+    error(i,1) = ps(ind1(1))-para(i);
+  
+ end
+
+%usigma = sigma*accuracy./abs(sigmau-sigma);%/sqrt(N-num_para);
+
+% lower bounds
+a = [];
+b1 = [];b2 = [];
+c1 = []; c2 = [];
+ind1 = []; ind2 = [];
+ps = [];
+for i = 1: num_para
+    paral = para;
+    p = paral(i);
+    lb = bounds(1,i);
+    ll = p-lb;
+    nl = floor(log2(ll/accuracy+1)):-0.2:1;
+    ps = [lb, p-2.^nl*accuracy, p];
+    sigmal = [];
+    for f = 1: length(ps)
+       paral(i) = ps(f);
+     %   esqu(i) = 0;
+    
+      yfitl =  mdl(paral, x);
+       %%% -------------------- use y - y_error as upper limit if y_error is
+      %%% avaailable to calculate resitual (this idea needs reference and justification): 
+      residuall =  y - yfitl;
+  %     residualu = y - y_error - yfitu; %----------------------------
+      sigmal(f) = sqrt(sum(residuall(:).^2)/N);
+    end
+    a = abs(sigmal - sigma);
+    b1 = abs(a - 1*sigma/sqrt(N-num_para)); % 66% confidence level 1 sigma
+    b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
+    [c1, ind1] = min(b1);
+    [c2, ind2] = min(b2);
+    lowbounds(i) = ps(ind2(1));
+    error(i,2) = para(i) - ps(ind1(1));
+ end
+
+parafinal2 = [para; lowbounds; upbounds];
+end
+
+
+
+%% custum your own model here for any functions including global fitting functions or multiple peak functions
 %------------------ Fitting model -----------------------------------------
 function [Yguess] = mdl(para, x) 
 % Yguess = para(1)*exp(-x/para(2));
 mdl2 = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5);
-% model can be very complicated and different model using the same set of parameters can be used for different curves when fit globally.
-% Similar to bitcorn mining when the complicated hash function is used.
+
 Yguess = mdl2(para, x);
 end
+
 % by Jixin Chen
