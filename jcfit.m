@@ -76,7 +76,7 @@ y2 = y + noise2; % white noise with equal weight
     
     % set fitting options
     option.maxiteration = 50;  % number of iteration fixed, the fitting will stop either this iteration or convergence reached first 
-    option.accuracy = 1E-3;  % best searching accuracy
+    option.precision = 1E-3;  % best searching precision
     option.convgtest = 1e-100; % difference between two iterations on the square difference between fitting and data.
 
     % ----------------Attn: change below for different fitting equations-----------------
@@ -142,14 +142,14 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, par
     if isempty(option.maxiteration)
      option.maxiteration = 50;  % number of iteration fixed
     end
-    if isempty(option.accuracy)
-     option.accuracy = 0.0001;    % best searching accuracy default 0.0
+    if isempty(option.precision)
+     option.precision = 0.0001;    % best searching precision default 0.0
     end
     if isempty(option.convgtest)
      option.convgtest = 1e-10; % difference between two iterations on the square difference between fitting and data.
     end
     maxiteration = option.maxiteration;
- %   accuracy = option.accuracy;
+ %   precision = option.precision;
     convgtest = option.convgtest;
     
     y_guess = mdl(paraGuess, x);
@@ -172,18 +172,18 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, par
          for i = 1:length(paraGuess) % scan each parameter
              %set the scanning scale withing the boundary.
             p = para(i);
-            if abs(p) > option.accuracy
-                accuracy = abs(p)*option.accuracy;
+            if abs(p) > option.precision
+                precision = abs(p)*option.precision;
             else
-                accuracy = option.accuracy;
+                precision = option.precision;
             end        
             lb = bounds(1, i);
             ub = bounds(2, i);
             ll = p-lb;
-            nl = floor(log2(ll/accuracy+1)):-0.5:1;
+            nl = floor(log2(ll/precision+1)):-0.5:1;
             ul = ub-p;
-            nu = 1:0.5:floor(log2(ul/accuracy+1));
-            ps = [lb, p-2.^nl*accuracy, p+2.^nu*accuracy, ub];
+            nu = 1:0.5:floor(log2(ul/precision+1));
+            ps = [lb, p-2.^nl*precision, p+2.^nu*precision, ub];
             error = zeros(length(ps),1);
              % scan the parameter across the scale
              for j = 1: length(ps)
@@ -209,7 +209,7 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, par
 
      parafinal = para;
 
-    [paraBounds_95, chisq, rsq] = finderror(mdl, x, y, parafinal, bounds, option.accuracy);
+    [paraBounds_95, chisq, rsq] = finderror(mdl, x, y, parafinal, bounds, option.precision);
     
 %-------------Note out the figure plotting or cut it to main function if
 %-------------you don't like it here:
@@ -228,12 +228,12 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, par
 end
 
 %% find errors of the fitting
-function [paraBounds_95, chisq, rsq] = finderror(mdl, x, y, para, bounds, accuracy)
+function [paraBounds_95, chisq, rsq] = finderror(mdl, x, y, para, bounds, precision)
 % parafinal structure: parameter, lower boundary, upper bounday at 95
 % confidence 2 sigma.
 % error structure: upper error and lower error. Take the average as the
 % final for 1 sigma.
-%accuracy = accuracy*10;
+%precision = precision*10;
 
 num_para = length(para);
 
@@ -265,8 +265,8 @@ for i = 1: num_para
     p = parau(i);
     ub = bounds(2,i);
     ul = ub-p;
-    nu = 1:0.2:floor(log2(ul/accuracy+1));
-    psu = [p, p+2.^nu*accuracy, ub];
+    nu = 1:0.2:floor(log2(ul/precision+1));
+    psu = [p, p+2.^nu*precision, ub];
     sigmau = zeros(length(psu),1);
     for f = 1: length(psu)
        parau(i) = psu(f);
@@ -291,7 +291,7 @@ for i = 1: num_para
   
  end
 
-%usigma = sigma*accuracy./abs(sigmau-sigma);%/sqrt(N-num_para);
+%usigma = sigma*precision./abs(sigmau-sigma);%/sqrt(N-num_para);
 
 
 for i = 1: num_para
@@ -299,8 +299,8 @@ for i = 1: num_para
     p = paral(i);
     lb = bounds(1,i);
     ll = p-lb;
-    nl = floor(log2(ll/accuracy+1)):-0.2:1;
-    psl = [lb, p-2.^nl*accuracy, p];
+    nl = floor(log2(ll/precision+1)):-0.2:1;
+    psl = [lb, p-2.^nl*precision, p];
     sigmal = zeros(length(psl),1);
     for f = 1: length(psl)
        paral(i) = psl(f);
