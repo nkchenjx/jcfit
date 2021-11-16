@@ -296,8 +296,8 @@ for i = 1: num_para
     b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
     [~, ind1] = min(b1);
     [~, ind2] = min(b2);
-    upbounds(i) = psu(ind2(1));
-    error(i,1) = psu(ind1(1))-para(i); % 2 sigma error upper bound
+    upbounds(i) = psu(ind2(1));         % 2 sigma 95 confidence upper bounds
+    error(i,1) = psu(ind1(1))-para(i); % 1 sigma error upper bound 66% confidence
   
  end
 
@@ -328,8 +328,8 @@ for i = 1: num_para
     b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
     [~, ind1] = min(b1);
     [~, ind2] = min(b2);
-    lowbounds(i) = psl(ind2(1));
-    error(i,2) = para(i) - psl(ind1(1));  % 2 sigma error lower bounds
+    lowbounds(i) = psl(ind2(1));          % 2 sigma 95 confidence lower bounds
+    error(i,2) = para(i) - psl(ind1(1));  % 1 sigma  error lower bounds 66% confidence
 end
 
 %----
