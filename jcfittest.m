@@ -76,7 +76,7 @@ y2 = y + noise2; % white noise with equal weight
 
     % set fitting options
     option.maxiteration = 50;  % number of iteration fixed, the fitting will stop either this iteration or convergence reached first 
-    option.accuracy = 1E-3;  % best searching accuracy
+    option.precision = 1E-3;  % best searching precision, recommend 1 decimal better than desired. e.g want 0.01, set to 0.001.
     option.convgtest = 1e-100; % difference between two iterations on the square difference between fitting and data.
 
     % ----------------Attn: change below for different fitting equations-----------------
