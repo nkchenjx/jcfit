@@ -1,7 +1,7 @@
 Curve fitting for 1D vector with any given model equations.
 
-Run 'example.m' for an example
-change your fitting model in the function 'mdl' in 'jcfitf.m' 
+Run 'jcfttest.m' for an example
+change your fitting model in the function 'mdl' in 'jcfitf.m' (moved to older versions 11/2021) if you use custom functions for complicated model or global fitting.
 
 cite:
 https://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b05697
@@ -17,4 +17,4 @@ An example can be find at:
 
 Juvinch R. Vicente, Ali Rafiei Miandashti, Kurt Sy Piecco, Joseph R. Pyle, Martin E. Kordesch, Jixin Chen*, Single-Particle Organolead Halide Perovskite Photoluminescence as a Probe for Surface Reaction Kinetics. ACS Applied Matierals & Interfaces, 2019, 11(19), 18034-18043.
 
-by Jixin Chen @ Ohio University 2019
+by Jixin Chen @ Ohio University 2021
