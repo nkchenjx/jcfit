@@ -30,7 +30,6 @@
 %% an example for triple exponential decay fitting of a single curve.
 %{
 
-
 clear
 
 %% generate raw data
@@ -60,28 +59,32 @@ y2 = y + noise2; % white noise with equal weight
     
     x = x; % a row vector
     y = y2; % a row vector
-      
+    figure; plot(x,y); title('raw data');
+    
+    
 % x=[0.25 0.5 1 1.5 2 3 4 6 8];
 % y=[19.21 18.15 15.36 14.10 12.89 9.32 7.45 5.24 3.01];
+%------------END of loading data: x and y in row vectors--------
 
-    %% -------% the rest can be a double expnential function which only need feed
-    % with x and y data.---------------------------
-    
-    %function [parafinal, rsq] = yournamedoubleExp(x1,y1)
-    
-    figure; plot(x,y); title('raw data');
+%% ----Setting up fitting model and parameters-------------
+    %           the rest can be a double expnential function, any custom function 
+    %           or a group of functions in a separated Matlab
+    %           function. Just pass the function handle to the fitting
+    %           funciton, e.g.
+    %           function [yfit1, yfit2, yfit3,...] = yournamedoubleExp(para, x1, x2, x3,...)
+    %                 
+    %           All functions are numerical solved with no efforts to fit
+    %           analytically with x and y data.
+    %-----------------------------------------
 
-
-    %------------END of loading data: x and y in row vectors--------
-    
     % set fitting options
     option.maxiteration = 50;  % number of iteration fixed, the fitting will stop either this iteration or convergence reached first 
-    option.precision = 1E-3;  % best searching precision
+    option.precision = 1E-3;  % best searching precision, recommend 1 decimal better than desired. e.g want 0.01, set to 0.001.
     option.convgtest = 1e-100; % difference between two iterations on the square difference between fitting and data.
 
     % ----------------Attn: change below for different fitting equations-----------------
     % set the fitting equation to double exponential decay with a base line
-mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5)*exp(-(x/para(6))) + para(7);
+    mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5)*exp(-(x/para(6))) + para(7);
 
 %    mdl = @(para, x) para(1)*exp(-(x/para(2))); 
     % equation grammar: modle name 'mdl' use as function y = mdl(para, x), the rest is the equation.
@@ -90,7 +93,7 @@ mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5)
     % which will allow combination of equations and global fitting using
     % different equations for different pieces of data that share some
     % common parameters.
-
+    
     % initial guess
     paraGuess = [7, 10, 4, 300, 8, 1000, 3];  % A1, tau1,  A2, tau2, baseline
 %     paraGuess = [1, 33];
@@ -107,18 +110,21 @@ mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5)
     if prod(d1)*prod(d2)<=0
         display('WARNING: initial guess out of boundary');
     end
-    %--------------END of fitting option setting, equation, initial guess, and 
+    %--------------END of fitting option setting, equation, initial guess,
+    %              and guessed parameter boundaries.
 
-    %------------------and start fitting:------------------------
     
- 
+    %------------------and start fitting:------------------------
+     
     tic
-     [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
+         [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
     toc
-%    fprintf(['\n rsq = ', num2str(rsq), '\n']);
+%     fprintf(['\n rsq = ', num2str(rsq), '\n']);
     % parafinal is the fitted results; yfit is the fittered curve; 
     % use residual = y-yfit; to get the residual
     % rsq: root mean sqare value best will be close to 1
+    
+    %--------- plot results -----------------
     yfit = mdl(parafinal, x);
     residual = y - yfit;
     figure; plot(x,y,'linewidth',1.5); hold on; plot(x,yfit,'linewidth',1.5); plot(x, residual,'linewidth',1.5);
@@ -130,6 +136,10 @@ mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5)
     ax.FontName = 'Arial';
     ax.FontSize = 20;
     ax.FontWeight = 'Bold';
+    
+    %-------------------------------------
+    % End. by Jixin Chen @ Ohio University
+
  
 %}
 
