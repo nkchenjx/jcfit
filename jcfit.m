@@ -335,6 +335,8 @@ end
 %----
 % lower and upper bounds of the parameters at 95% confidence or 2 sigma of the final noise.
 paraBounds_95 = [lowbounds(:)'; upbounds(:)']; 
+% warning: the parameter 95% confidence lower and upper bounds are based on estimation of the local minimum,
+% not considering global minimum and other local minima.
 %------
 % parafinal2 = [para; lowbounds; upbounds];
 end
