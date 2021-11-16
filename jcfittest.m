@@ -24,9 +24,9 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % SOFTWARE.
 
-%% an example for double exponential decay fitting of a single curve.
+%% an example for triple exponential decay fitting of a single curve.
+% this example takes 40 s on a Intel i7 cpu. No GPU or parallel funciton has been used yet.
 
- %   load('jcfit2DExampleData.mat');
 clear
 
 %% generate raw data
