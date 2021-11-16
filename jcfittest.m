@@ -115,7 +115,11 @@ y2 = y + noise2; % white noise with equal weight
      
     tic
          [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
+    % warning: the parameter 95% confidence lower and upper bounds are based on estimation of the local minimum,
+    % not considering global minimum and other local minima.
     toc
+
+    
 %     fprintf(['\n rsq = ', num2str(rsq), '\n']);
     % parafinal is the fitted results; yfit is the fittered curve; 
     % use residual = y-yfit; to get the residual
