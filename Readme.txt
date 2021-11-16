@@ -4,7 +4,18 @@ Developped and test on softer versions
 MATLAB 2014b
 Windows 10 
 
-Run 'jcfttest.m' for an example
+1. in folder jcfit_L1
+    run jcfit_L1_test.m
+
+2. in folder jcfit_L2
+    run jcfittest.m
+
+Both are the same code using different panelty term:
+1. L1 minimize absolute sum of residual, i.e. least absolute sum of variation 
+2. L2 minimize sum of square of residual, i.e. least square regression
+
+Thery both have different strengths for different problems.
+
 change your fitting model in the function 'mdl' in 'jcfitf.m' (moved to older versions 11/2021) if you use custom functions for complicated model or global fitting.
 
 cite:
