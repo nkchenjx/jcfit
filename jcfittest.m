@@ -53,7 +53,7 @@ y2 = y + noise2; % white noise with equal weight
 
 % figure; plot(x, y); hold on; plot(x, y1); plot(x, y2); 
 
-    
+%% ------load raw data------------------    
     x = x; % a row vector
     y = y2; % a row vector
     figure; plot(x,y); title('raw data');
