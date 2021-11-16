@@ -1,8 +1,8 @@
 Curve fitting for 1D vector with any given model equations.
 
-Developped and test on version
+Developped and test on softer versions
 MATLAB 2014b
-in Windows 10 
+Windows 10 
 
 Run 'jcfttest.m' for an example
 change your fitting model in the function 'mdl' in 'jcfitf.m' (moved to older versions 11/2021) if you use custom functions for complicated model or global fitting.
