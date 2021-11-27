@@ -88,7 +88,7 @@
     %--------------END of fitting option setting, equation, initial guess, and 
 
     %------------------and start fitting:------------------------
-    [parafinal, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess, bounds, option);
+    [parafinal, xfit, yfit, residual, chisq, rsq] = fitnguessf(x, y, paraGuess, bounds, option);
     
     display('--------------plot fitting results (x,y), (xfit, yfit), and residual -----------');
     display(parafinal);
