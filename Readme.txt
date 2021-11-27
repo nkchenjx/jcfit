@@ -11,7 +11,7 @@ Windows 10
     run jcfittest.m
 
 Both are the same code using different penalty terms:
-1. L1 minimize the absolute sum of residual, i.e. least absolute sum of variation 
+1. L1 minimize the absolute sum of residual, i.e. least absolute sum of variation/deviation 
 2. L2 minimize sum of square of residual, i.e. least square regression
 
 They both have different strengths for different problems. 
