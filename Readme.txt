@@ -15,7 +15,7 @@ Both are the same code using different penalty terms:
 2. L2 minimize sum of square of residual, i.e. least square regression
 
 They both have different strengths for different problems. 
-Least square regression jcfit_L2 is >10 times slower than the Levenberg-Marquardt (LM, https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) method for simple models such as exponential decays but is extremely easy to understand and to extend for complicated systems such as global fittings, fitting of multidimensional data, or systems with combined models. It is also very easy to be modified for parallel computing.
+Least square regression jcfit_L2 is >10 times slower than the Levenberg-Marquardt (LM) (https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) method for simple models such as exponential decays but is extremely easy to understand and to extend for complicated systems such as global fittings, fitting of multidimensional data, or systems with combined models. It is also very easy to be modified for parallel computing.
 
 Basic idea: 
 For a given raw data and a math model, use the inital guess of the parameters in the model to generate the guessed data and get the residual between the two sets of data.
