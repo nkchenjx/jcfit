@@ -117,7 +117,7 @@ y2 = y + noise2; % white noise with equal weight
     %------------------and start fitting:------------------------
      
     tic
-         [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
+         [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L1(mdl, x, y, paraGuess, bounds, option);
     toc
 %     fprintf(['\n rsq = ', num2str(rsq), '\n']);
     % parafinal is the fitted results; yfit is the fittered curve; 
@@ -147,7 +147,7 @@ y2 = y + noise2; % white noise with equal weight
 %% main function with data error bar not fitted
 % -------if mdl is a complicated function, remove it from here and add it
 % in the end as a separated function.
-function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, paraGuess, bounds, option)
+function [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L1(mdl, x, y, paraGuess, bounds, option)
     % load options
     if isempty(option.maxiteration)
      option.maxiteration = 50;  % number of iteration fixed
