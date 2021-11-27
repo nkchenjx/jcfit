@@ -1,6 +1,6 @@
 Curve fitting for 1D vector with any given model equations.
 
-Developped and test on softer versions
+Developped and test on software versions
 MATLAB 2014b
 Windows 10 
 
