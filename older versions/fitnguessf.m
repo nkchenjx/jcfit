@@ -86,7 +86,7 @@
     %--------------END of fitting option setting, equation, initial guess, and 
 
     %------------------and start fitting:------------------------
-    [parafinal, yfit, chisq, rsq] = jcfit(mdl, x, y, paraGuess, bounds, option);
+    [parafinal, yfit, chisq, rsq] = fitnguessf(mdl, x, y, paraGuess, bounds, option);
     fprintf(['\n rsq = ', num2str(rsq), '\n']);
     % parafinal is the fitted results; yfit is the fittered curve; 
     % use residual = y-yfit; to get the residual
@@ -96,7 +96,7 @@
 
 
 %% main function with data error bar not fitted
-function [parafinal2, xfit, yfit, residual, chisq, rsq] = jcfitf(x, y, paraGuess, bounds, option)
+function [parafinal2, xfit, yfit, residual, chisq, rsq] = fitnguessf(x, y, paraGuess, bounds, option)
     % load options
     if ~isfield(option,'maxiteration')
      option.maxiteration = 50;  % number of iteration fixed
