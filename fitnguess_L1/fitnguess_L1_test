@@ -114,7 +114,7 @@ y2 = y + noise2; % white noise with equal weight
     %------------------and start fitting:------------------------
      
     tic
-         [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, paraGuess, bounds, option);
+         [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L1(mdl, x, y, paraGuess, bounds, option);
     % warning: the parameter 95% confidence lower and upper bounds are based on estimation of the local minimum,
     % not considering global minimum and other local minima.
     toc
