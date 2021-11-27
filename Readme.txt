@@ -8,7 +8,7 @@ Windows 10
     run fitnguess_L1_test.m
 
 2. in folder fitnguess_L2
-    run fitnguess.m
+    run fitnguess_L2_test.m
 
 Both are the same code using different penalty terms:
 1. L1 minimize the absolute sum of residual, i.e. least absolute sum of variation/deviation 
