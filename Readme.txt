@@ -15,7 +15,11 @@ Both are the same code using different penalty terms:
 2. L2 minimize sum of square of residual, i.e. least square regression
 
 They both have different strengths for different problems. 
-Least square regression jcfit_L2 is >10 times slower than the Levenberg-Marquardt method for simple models such as exponential decays but is extremely easy to understand and to extend for complicated systems such as global fittings, fitting of multidimensional data, or systems with combined models.
+Least square regression jcfit_L2 is >10 times slower than the Levenberg-Marquardt (LM) method for simple models such as exponential decays but is extremely easy to understand and to extend for complicated systems such as global fittings, fitting of multidimensional data, or systems with combined models.
+
+Basic idea: 
+For a given raw data and a math model, use the inital guess of the parameters in the model to generate the guessed data and get the residual between the two sets of data.
+The sum of the absolute values of all residuals (L1) or the sum of the square of the residuals (L2) is a function to the parameters for which the LM use an algorithm modified from Newton-Gauss algorithm in finding the minimum. While JCFIT will guess a series of possible values within the boundaries of each parameter and take the minimum as the initial guess for the next iteration. The searching space is exponentially distributed along the initial guess to the boundaries e.g. -10 to 10 with initial guess 0 and searching precision ~0.1: [-10, -5, -2, -1, -0.5, -0.2, -0.1, [0], 0.1, 0.2, 0.5, 1, 2, 5, 10]. It does not follow the assumption in LM that these is only one mininum. It is 5-20 times slower than LM in this example, but has a chance to find the "global" minimum in this parameter dimension, which unfortunitly may be different from the global minimum of all parameters. The searching goes through all parameters sequentially in each iteration making it a P searching algorithm (https://en.wikipedia.org/wiki/P_versus_NP_problem). 
 
 Change your fitting model in the function 'mdl' in 'jcfitf.m' (moved to older versions 11/2021) if you use custom functions for a complicated model or global fitting.
 
