@@ -26,7 +26,7 @@
 
 %% an example for double exponential decay fitting of a single curve.
 %{
-    load('fitnguessExampleData.mat');
+    load('jcfitExampleData.mat');
 
     x1 = exampledata_x; % a row vector
     y1 = exampledata_y; % a row vector
