@@ -1,5 +1,5 @@
 Curve fitting for 1D vector with any given model equations.
-Renamed from jcfit to fitnguess 11/2021.
+Renamed from jcfit to fitnguess 11/2021, stands for fit with natrual guessing.
 
 Developed and tested on software versions
 MATLAB 2014b
