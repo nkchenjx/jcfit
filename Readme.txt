@@ -12,8 +12,8 @@ Windows 10
     run fitnguess_L2_test.m
 
 Both are the same code using different penalty terms:
-1. L1 minimize the absolute sum of residual, i.e. least absolute sum of variation/deviation 
-2. L2 minimize sum of square of residual, i.e. least square regression
+1. L1 minimizes the absolute sum of residual, i.e. least absolute sum of variation/deviation: minimize(sum(abs(y-yguess))) 
+2. L2 minimizes sum of square of residual, i.e. least square regression: minimize(sum(y-yguess)^2)
 
 They both have different strengths for different problems. 
 Least square regression fitnguess_L2 is >10 times slower than the Levenberg-Marquardt (LM) (https://en.wikipedia.org/wiki/Levenberg%E2%80%93Marquardt_algorithm) method for simple models such as exponential decays but is extremely easy to understand and to extend for complicated systems such as global fittings, fitting of multidimensional data, or systems with combined models. It is also very easy to be modified for parallel computing.
