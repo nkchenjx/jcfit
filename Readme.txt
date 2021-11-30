@@ -1,4 +1,5 @@
 Curve fitting for 1D vectors or ND matrix with any given model equations using a random search algorithm.
+Codes for Levenberg–Marquardt algorithm have been provided as a comparison.
 Renamed from jcfit to fitnguess 11/2021, stands for Fit with Natrual Guessing.
 
 Developed and tested on software versions
@@ -10,7 +11,7 @@ Windows 10
 
 2. in folder fitnguess_L2
     run fitnguess_L2_test.m
-
+    
 Both are the same code using different penalty terms:
 1. L1 minimizes the absolute sum of residual, i.e. least absolute sum of variation/deviation: minimize(sum(abs(y-yguess))) 
 2. L2 minimizes sum of square of residual, i.e. least square regression: minimize(sum(y-yguess)^2)
@@ -37,5 +38,14 @@ The code can be changed to fit multiple curves globally by introducing different
 
 An example can be found at:
 Juvinch R. Vicente, Ali Rafiei Miandashti, Kurt Sy Piecco, Joseph R. Pyle, Martin E. Kordesch, Jixin Chen*, Single-Particle Organolead Halide Perovskite Photoluminescence as a Probe for Surface Reaction Kinetics. ACS Applied Matierals & Interfaces, 2019, 11(19), 18034-18043.
+
+
+3. in folder Fit_LM
+    run fit_LM_test.m   or
+        fit_LM_num_test.m
+This is a reproduced Levenberg–Marquardt algorithm with literature citation given in the code. 
+where fit_LM_test need provide analytical solution for the Jacobian matrix and fit_LM_num does not.
+Fit_LM_num will automatically calculate the gradient numerically for any given function.
+
 
 by Jixin Chen @ Ohio University 2021
