@@ -1,4 +1,4 @@
-Curve fitting for 1D vector with any given model equations using a random search algorithm.
+Curve fitting for 1D vectors or ND matrix with any given model equations using a random search algorithm.
 Renamed from jcfit to fitnguess 11/2021, stands for fit with natrual guessing.
 
 Developed and tested on software versions
