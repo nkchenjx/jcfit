@@ -169,7 +169,7 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L1(mdl, x,
     if isfield(option,'step')
         step = option.step;
     else
-        step = 0.5; % difference between two iterations on the square difference between fitting and data.
+        step = 0.5; % spacing fraction. Spacing is 2^(step*i)*precision, i is the number of guessing point away from the initial guess.
     end
 
    
