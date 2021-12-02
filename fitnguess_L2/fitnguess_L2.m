@@ -149,24 +149,33 @@ y2 = y + noise2; % white noise with equal weight
 % in the end as a separated function.
 function [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L2(mdl, x, y, paraGuess, bounds, option)
     % load options
-    if isempty(option.maxiteration)
-     option.maxiteration = 50;  % number of iteration fixed
+    if isfield(option, 'maxiteration')
+        maxiteration = option.maxiteration;
+    else
+        maxiteration = 50;  % number of iteration fixed
     end
-    if isempty(option.precision)
-     option.precision = 0.0001;    % best searching precision default 0.0
+    
+    if isfield(option, 'precision')
+        precision =option.precision;
+    else
+        precision = 0.0001;    % best searching precision default 0.0
     end
-    if isempty(option.convgtest)
-     option.convgtest = 1e-10; % difference between two iterations on the square difference between fitting and data.
+    
+    if isfield(option, 'convgtest')
+        convgtest = option.convgtest;
+    else
+        convgtest = 1e-10; % difference between two iterations on the square difference between fitting and data.
     end
-    maxiteration = option.maxiteration;
- %   precision = option.precision;
-    convgtest = option.convgtest;
+    if isfield(option,'step')
+        step = option.step;
+    else
+        step = 0.5; % difference between two iterations on the square difference between fitting and data.
+    end
     
     y_guess = mdl(paraGuess, x);
     residual = y-y_guess;
-    minerrorlast = dot(residual, residual);
-  
-    
+    minerrorlast = dot(residual, residual); %L2, least square
+%    minerrorlast = sum(abs(residual(:))); %L1, least absolute various
     
     para = paraGuess;
     paraHist = zeros(maxiteration, length(paraGuess) + 1); % last one error score
@@ -182,17 +191,17 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L2(mdl, x,
          for i = 1:length(paraGuess) % scan each parameter
              %set the scanning scale withing the boundary.
             p = para(i);
-            if abs(p) > option.precision
-                precision = abs(p)*option.precision;
-            else
-                precision = option.precision;
-            end        
+%             if abs(p) > option.precision
+%                 precision = abs(p)*option.precision;
+%             else
+%                 precision = option.precision;
+%             end        
             lb = bounds(1, i);
             ub = bounds(2, i);
             ll = p-lb;
-            nl = floor(log2(ll/precision+1)):-0.5:1;
+            nl = floor(log2(ll/precision+1)):-step:1;
             ul = ub-p;
-            nu = 1:0.5:floor(log2(ul/precision+1));
+            nu = 1:step:floor(log2(ul/precision+1));
             ps = [lb, p-2.^nl*precision, p+2.^nu*precision, ub];
             error = zeros(length(ps),1);
              % scan the parameter across the scale
