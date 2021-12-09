@@ -105,8 +105,8 @@ y2 = y + noise2; % white noise with equal weight
 
     d1 = paraGuess-bounds(1,:);
     d2 = bounds(2,:)-paraGuess;
-    if prod(d1)*prod(d2)<=0
-        display('WARNING: initial guess out of boundary');
+    if ~isempty(find([d1,d2]<=0))
+        display(['WARNING: initial guess out of boundary paraGuess #', num2str(find(d1<=0)), num2str(find(d2<=0))]);
     end
     %--------------END of fitting option setting, equation, initial guess,
     %              and guessed parameter boundaries.
