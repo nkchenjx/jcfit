@@ -202,7 +202,7 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L2(mdl, x,
             nl = floor(log2(ll/precision+1)):-step:1;
             ul = ub-p;
             nu = 1:step:floor(log2(ul/precision+1));
-            ps = [lb, p-2.^nl*precision, p+2.^nu*precision, ub];
+            ps = [p, lb, p-2.^nl*precision, p+2.^nu*precision, ub]; 
             error = zeros(length(ps),1);
              % scan the parameter across the scale
              for j = 1: length(ps)
@@ -213,7 +213,7 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = fitnguess_L2(mdl, x,
              end
              % find the best
              [minerror, ind] = min(error); % find the least square.
-             para(i) = ps(ind);
+             para(i) = ps(ind(1)); % if there are multiple minuma, take the first, could be p.
          end
          %test if converged
          if abs(minerror-minerrorlast)< convgtest; %convergence test positive
