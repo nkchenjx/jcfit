@@ -215,7 +215,8 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
          if rem(iteration, 100) == 0 % progressing indicator
              fprintf('\n');
          end
-         for i = 1:length(paraGuess) % scan each parameter
+         paraOrder = randperm(length(paraGuess));
+         for i = paraOrder % scan each parameter
              %set the scanning scale withing the boundary.
             p = para(i);
 %             if abs(p) > option.precision
