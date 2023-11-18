@@ -3,7 +3,7 @@
 
 % coded by Jixin Chen @ Ohio University 11/2021
 % http://blog.sina.com.cn/s/blog_4a8e595e01014tvb.html
-% the Levenberg–Marquardt Method
+% the Levenbergâ€“Marquardt Method
 
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
@@ -87,7 +87,7 @@ Jacobian = @(para, x) [exp(-x/para(2)),  para(1)/para(2)^2*x.*exp(-x/para(2)), e
 % J(i,:) = [exp(-b_guess*x(i)),  -a_guess*x(i)*exp(-b_guess*x(i))]; % [df/da, df/db]
 
     
-%%  Levenberg–Marquardt Method using numerical method to find the Jacobian matrix
+%%  Levenbergâ€“Marquardt Method using numerical method to find the Jacobian matrix
 [paraHist, parafinal, sigma_p, chisq, rsq] = fit_LM(mdl, Jacobian, x, y, paraGuess, option);
 
 
@@ -134,14 +134,14 @@ error = dot(residual, residual);
 miu = miu_init;
 v = v_init;
 
-% step2: run Levenberg–Marquardt iterations
+% step2: run Levenbergâ€“Marquardt iterations
 updateJ = 1;
 para = paraGuess';
 paraHist = zeros(n_maxiters, n_paras + 1); % last one error score
 
 tic
 for it=1:n_maxiters
-    paraHist(it,:) = [para', error];
+    paraHist(it,:) = [para', error/length(y)];
     fprintf('.');
     if rem(it, 100) == 0 % progressing indicator
         fprintf('\n');
