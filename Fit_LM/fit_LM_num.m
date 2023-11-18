@@ -20,7 +20,7 @@
 
 % coded by Jixin Chen @ Ohio University 11/2021
 % http://blog.sina.com.cn/s/blog_4a8e595e01014tvb.html
-% the Levenberg–Marquardt Method using numerical method to find the
+% the Levenbergâ€“Marquardt Method using numerical method to find the
 % Jacobian matrix
 % http://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf
 
@@ -84,7 +84,7 @@ mdl = @(para, x) para(1)*exp(-(x/para(2))) + para(3)*exp(-(x/para(4))) + para(5)
 paraGuess = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];  % A1, tau1,  A2, tau2,..., baseline
 
     
-%%  Levenberg–Marquardt Method using numerical method to find the Jacobian matrix
+%%  Levenbergâ€“Marquardt Method using numerical method to find the Jacobian matrix
 [paraHist, parafinal, sigma_p, chisq, rsq] = fit_LM_num(mdl, x, y, paraGuess, option);
 
 
@@ -108,7 +108,7 @@ disp(['Fitted final parameters = ', num2str(parafinal)]);
 disp(['sigma (66%) = ', num2str(sigma_p)]);
 %}
 
-%% evenberg–Marquardt fitting function http://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf
+%% evenbergâ€“Marquardt fitting function http://www2.imm.dtu.dk/pubdb/edoc/imm3215.pdf
 function [paraHist, parafinal, sigma_p, chisq, rsq] = fit_LM_num(mdl, x, y, paraGuess, option)
     
     
@@ -142,7 +142,7 @@ function [paraHist, parafinal, sigma_p, chisq, rsq] = fit_LM_num(mdl, x, y, para
     miu = miu_init;
     v = v_init;
 
-    % step2: run Levenberg–Marquardt iterations
+    % step2: run Levenbergâ€“Marquardt iterations
     updateJ = 1;
     para = paraGuess';
 
@@ -150,7 +150,7 @@ function [paraHist, parafinal, sigma_p, chisq, rsq] = fit_LM_num(mdl, x, y, para
     
     tic
     for it=1:n_maxiters
-        paraHist(it,:) = [para', error];
+        paraHist(it,:) = [para', error/length(y)];
         fprintf('.');
         if rem(it, 100) == 0 % progressing indicator
             fprintf('\n');
