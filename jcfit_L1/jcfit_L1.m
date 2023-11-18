@@ -192,7 +192,9 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, 
          if rem(iteration, 100) == 0 % progressing indicator
              fprintf('\n');
          end
-         for i = 1:length(paraGuess) % scan each parameter
+         paraOrder = randperm(length(paraGuess));
+         for i = paraOrder % scan each parameter with random order        
+         %for i = 1:length(paraGuess) % scan each parameter in original order
              %set the scanning scale withing the boundary.
             p = para(i);
 %             if abs(p) > precision
