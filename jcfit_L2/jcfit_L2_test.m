@@ -54,8 +54,9 @@ y2 = y + noise2; % white noise with equal weight
 % figure; plot(x, y); hold on; plot(x, y1); plot(x, y2); 
 
 %% ------load raw data------------------    
-    x = x; % a row vector
-    y = y2; % a row vector
+    x = x(:); % a vector 
+    y = y2(:); % a vector. 2D data need to modify the fitting function to calculate residual correctly 
+               % or vectorize and modify the mdl function to calculate the y_guess correctly
     figure; plot(x,y); title('raw data');
     
     
@@ -115,7 +116,8 @@ y2 = y + noise2; % white noise with equal weight
     %------------------and start fitting:------------------------
      
     tic
-         [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L2(mdl, x, y, paraGuess, bounds, option);
+         
+         Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option);
     % warning: the parameter 95% confidence lower and upper bounds are based on estimation of the local minimum,
     % not considering global minimum and other local minima.
     toc
@@ -127,10 +129,10 @@ y2 = y + noise2; % white noise with equal weight
     % rsq: root mean sqare value best will be close to 1
     
     %--------- plot results -----------------
-    yfit = mdl(parafinal, x);
-    residual = y - yfit;
+    yfit = Results.yfit;
+    residual = Results.residual;
     figure; plot(x,y,'linewidth',1.5); hold on; plot(x,yfit,'linewidth',1.5); plot(x, residual,'linewidth',1.5);
-    title(['rsq = ', num2str(rsq)]);
+    title(['rsq = ', num2str(Results.rsq)]);
     ax = gca;
     ax.LineWidth = 1.5;
     ax.Box = 'on';
@@ -139,5 +141,14 @@ y2 = y + noise2; % white noise with equal weight
     ax.FontSize = 20;
     ax.FontWeight = 'Bold';
     
+    figure; plot(Results.errorHist, 'linewidth',1.5);
+    title('error vs iteration');
+    ax = gca;
+    ax.LineWidth = 1.5;
+    ax.Box = 'on';
+    ax.TickLength = [0.02, 0.02];
+    ax.FontName = 'Arial';
+    ax.FontSize = 20;
+    ax.FontWeight = 'Bold';
     %-------------------------------------
     % End. by Jixin Chen @ Ohio University
