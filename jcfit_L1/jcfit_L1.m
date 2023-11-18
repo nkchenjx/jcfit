@@ -186,7 +186,7 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, 
     
      tic
      for iteration = 1:maxiteration % fixed number of iteration.
-         paraHist(iteration,:) = [para, minerrorlast]; 
+         paraHist(iteration,:) = [para, minerrorlast/length(y)]; 
          
          fprintf('.');
          if rem(iteration, 100) == 0 % progressing indicator
