@@ -77,7 +77,7 @@ y2 = y + noise2; % white noise with equal weight
 
     % set fitting options
     option.maxiteration = 50;  % number of iteration fixed, the fitting will stop either this iteration or convergence reached first 
-    option.precision = 1E-3;  % best searching precision, recommend 1 decimal better than desired. e.g want 0.01, set to 0.001.
+    option.precision = 1E-6;  % best searching precision, recommend 1 decimal better than desired. e.g want 0.01, set to 0.001.
     option.convgtest = 1e-100; % difference between two iterations on the square difference between fitting and data.
 %    option.step = 0.5; %Super important for speed. Suggest 0.5. Can be 0.1-4;
 
@@ -94,7 +94,7 @@ y2 = y + noise2; % white noise with equal weight
     % common parameters.
     
     % initial guess
-    paraGuess = [7, 10, 4, 300, 8, 1000, 3];  % A1, tau1,  A2, tau2, baseline
+    paraGuess = [1, 1, 1, 1, 1, 1, 1];  % A1, tau1,  A2, tau2, baseline
 %     paraGuess = [1, 33];
     % boundarys
     bounds = [0, 0, 0, 0, 0, 0, 0;   % lower boundary
