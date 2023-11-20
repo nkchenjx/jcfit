@@ -5,7 +5,7 @@
 % 20200617 Jixin Chen add fitting error analysis
 % 20211116 Jixin Chen cleaned the code and change a few variable names for
 %                     easy to read
-% 
+% 20231119 Jixin Chen fixed some bugs
 
 % Copyright (c) 2018 Jixin Chen @ Ohio University
 % 
@@ -198,19 +198,19 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
     
     y_guess = mdl(paraGuess, x);
     residual = y-y_guess;
-    minerrorlast = dot(residual, residual)/length(y); %L2, least square
+    minerrorlast = dot(residual, residual); %L2, least square
+    errorpara = minerrorlast;
 %    minerrorlast = sum(abs(residual(:))); %L1, least absolute various
     
     para = paraGuess;
     paraHist = zeros(maxiteration, length(paraGuess)); % last one error score
-    errorHist = zeros(maxiteration, 1);
+    paraHist(1,:) = para;
+    errorHist = inf(maxiteration, 1);
+    errorHist(1) = minerrorlast/length(y);
     errorCount = 0;
     
      tic
      for iteration = 1:maxiteration % fixed number of iteration.
-         paraHist(iteration,:) = para; 
-         errorHist(iteration, 1) = minerrorlast/length(y);
-         
          fprintf('.');
          if rem(iteration, 100) == 0 % progressing indicator
              fprintf('\n');
@@ -228,28 +228,39 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
             lb = bounds(1, i);
             ub = bounds(2, i);
             ll = p-lb;
-            nl = floor(log2(ll/precision+1)):-step:1;
+            nl = floor(log2(ll/precision+1)):-step:0;
             ul = ub-p;
-            nu = 1:step:floor(log2(ul/precision+1));
-            ps = [p, lb, p-2.^nl*precision, p+2.^nu*precision, ub]; 
-            error = zeros(length(ps),1);
+            nu = 0:step:floor(log2(ul/precision+1));
+            ps = [lb, p-2.^nl*precision, p+2.^nu*precision, ub]; 
+            error = inf(length(ps),1);
              % scan the parameter across the scale
-             for j = 1: length(ps)
+            for j = 1: length(ps)
                 para(i) = ps(j);
-                residual = y - mdl(para,x);
-                %error(j) = sum((mdl(para, x)-y).^2); %---the key equation: sum square of residual
-                error(j) = dot(residual, residual); % square residual, dot() is ~5% faster than sum()
+                try
+                    residual = y - mdl(para,x);
+                    error(j) = sum((mdl(para, x)-y).^2); %---the key equation: sum square of residual
+                    error(j) = dot(residual, residual); % square residual, dot() is ~5% faster than sum()
+                catch ME
+                    errorcount = errorcount + 1;
+                end
              end
              % find the best
              [minerror, ind] = min(error); % find the least square.
-             para(i) = ps(ind(1)); % if there are multiple minuma, take the first, could be p.
+             if minerror < errorpara
+                 para(i) = ps(ind(1));
+                 errorpara = minerror;
+             else
+                 para(i) = p;
+             end
          end
          %test if converged
-         if abs(minerror-minerrorlast)< convgtest  %convergence test positive
+         if (minerrorlast-errorpara) < convgtest  %convergence test positive
              fprintf(['\n converged at iteration = ', num2str(iteration)]);
              break
          end
-         minerrorlast = minerror;
+         minerrorlast = errorpara;
+         paraHist(iteration+1,:) = para; 
+         errorHist(iteration+1, 1) = minerrorlast/length(y);
      end
     fprintf('\n');
     
