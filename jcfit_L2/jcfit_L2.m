@@ -209,7 +209,7 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
      tic
      for iteration = 1:maxiteration % fixed number of iteration.
          paraHist(iteration,:) = para; 
-         errorHist(iteration, 1) = minerrorlast;
+         errorHist(iteration, 1) = minerrorlast/length(y);
          
          fprintf('.');
          if rem(iteration, 100) == 0 % progressing indicator
@@ -249,7 +249,7 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
              fprintf(['\n converged at iteration = ', num2str(iteration)]);
              break
          end
-         minerrorlast = minerror/length(y);
+         minerrorlast = minerror;
      end
     fprintf('\n');
     
