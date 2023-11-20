@@ -5,7 +5,7 @@
 % 20200617 Jixin Chen add fitting error analysis
 % 20211116 Jixin Chen cleaned the code and change a few variable names for
 %                     easy to read
-% 
+% 20231119 Jixin Chen fixed some bugs
 
 % Copyright (c) 2018 Jixin Chen @ Ohio University
 % 
@@ -27,8 +27,10 @@
 % OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 % SOFTWARE.
 
-%% an example for triple exponential decay fitting of a single curve.
 %{
+
+%% an example for triple exponential decay fitting of a single curve.
+% this example takes 40 s on a Intel i7 cpu. No GPU or parallel funciton has been used yet.
 
 clear
 
@@ -56,9 +58,9 @@ y2 = y + noise2; % white noise with equal weight
 
 % figure; plot(x, y); hold on; plot(x, y1); plot(x, y2); 
 
-    
-    x = x; % a row vector
-    y = y2; % a row vector
+%% ------load raw data------------------    
+    x = x; % a  vector
+    y = y2; % a vector
     figure; plot(x,y); title('raw data');
     
     
@@ -81,6 +83,7 @@ y2 = y + noise2; % white noise with equal weight
     option.maxiteration = 50;  % number of iteration fixed, the fitting will stop either this iteration or convergence reached first 
     option.precision = 1E-3;  % best searching precision, recommend 1 decimal better than desired. e.g want 0.01, set to 0.001.
     option.convgtest = 1e-100; % difference between two iterations on the square difference between fitting and data.
+%    option.step = 0.5; %Super important for speed. Suggest 0.5. Can be 0.1-4;
 
     % ----------------Attn: change below for different fitting equations-----------------
     % set the fitting equation to double exponential decay with a base line
@@ -107,8 +110,8 @@ y2 = y + noise2; % white noise with equal weight
 
     d1 = paraGuess-bounds(1,:);
     d2 = bounds(2,:)-paraGuess;
-    if prod(d1)*prod(d2)<=0
-        display('WARNING: initial guess out of boundary');
+    if ~isempty(find([d1,d2]<=0))
+        display(['WARNING: initial guess out of boundary paraGuess #', num2str(find(d1<=0)), num2str(find(d2<=0))]);
     end
     %--------------END of fitting option setting, equation, initial guess,
     %              and guessed parameter boundaries.
@@ -117,16 +120,26 @@ y2 = y + noise2; % white noise with equal weight
     %------------------and start fitting:------------------------
      
     tic
-         [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, paraGuess, bounds, option);
+         
+         Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option);
+         paraHist = Results.paraHist;
+         parafinal = Results.parafinal;
+         paraBounds_95 = Results.paraBounds_95;
+         chisq = Results.chisq;
+         rsq  = Results.rsq;
+    % warning: the parameter 95% confidence lower and upper bounds are based on estimation of the local minimum,
+    % not considering global minimum and other local minima.
     toc
+
+    
 %     fprintf(['\n rsq = ', num2str(rsq), '\n']);
     % parafinal is the fitted results; yfit is the fittered curve; 
     % use residual = y-yfit; to get the residual
     % rsq: root mean sqare value best will be close to 1
     
     %--------- plot results -----------------
-    yfit = mdl(parafinal, x);
-    residual = y - yfit;
+    yfit = Results.yfit;
+    residual = Results.residual;
     figure; plot(x,y,'linewidth',1.5); hold on; plot(x,yfit,'linewidth',1.5); plot(x, residual,'linewidth',1.5);
     title(['rsq = ', num2str(rsq)]);
     ax = gca;
@@ -137,17 +150,24 @@ y2 = y + noise2; % white noise with equal weight
     ax.FontSize = 20;
     ax.FontWeight = 'Bold';
     
+    figure; plot(Results.errorHist);
+    title('error vs iteration = ');
+    ax = gca;
+    ax.LineWidth = 1.5;
+    ax.Box = 'on';
+    ax.TickLength = [0.02, 0.02];
+    ax.FontName = 'Arial';
+    ax.FontSize = 20;
+    ax.FontWeight = 'Bold';
     %-------------------------------------
-    % End. by Jixin Chen @ Ohio University
 
- 
 %}
 
 
 %% main function with data error bar not fitted
 % -------if mdl is a complicated function, remove it from here and add it
 % in the end as a separated function.
-function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, paraGuess, bounds, option)
+function Results = jcfit_L1(mdl, x, y, paraGuess, bounds, option)
     % load options
     if isfield(option, 'maxiteration')
         maxiteration = option.maxiteration;
@@ -158,7 +178,7 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, 
     if isfield(option, 'precision')
         precisionS =option.precision;
     else
-        precisionS = 0.0001;    % best searching precision default 0.0
+        precisionS = 0.0001;    % best searching precision default 0.0001, 4 sig. fig.
     end
     
     if isfield(option, 'convgtest')
@@ -171,34 +191,38 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, 
     else
         step = 0.5; % spacing fraction. Spacing is 2^(step*i)*precision, i is the number of guessing point away from the initial guess.
     end
-
-   
+    
+    x = x(:);  y = y(:);  % force column vector for both x and y
+      % a vector. 2D, 3D data need to modify the fitting function to calculate model and residual correctly 
+      % or vectorize and modify the mdl function to calculate the y_guess correctly
     
     y_guess = mdl(paraGuess, x);
     residual = y-y_guess;
-%    minerrorlast = dot(residual, residual); %L2, least square
-    minerrorlast = sum(abs(residual(:))); %L1, least absolute various
-  
-    
+    minerrorlast = dot(residual, residual); %L2, least square
+    errorpara = minerrorlast;
+%    minerrorlast = sum(abs(residual(:))); %L1, least absolute various
     
     para = paraGuess;
-    paraHist = zeros(maxiteration, length(paraGuess) + 1); % last one error score
+    paraHist = zeros(maxiteration, length(paraGuess)); % last one error score
+    paraHist(1,:) = para;
+    errorHist = inf(maxiteration, 1);
+    errorHist(1) = minerrorlast/length(y);
+    errorCount = 0;
     
      tic
      for iteration = 1:maxiteration % fixed number of iteration.
-         paraHist(iteration,:) = [para, minerrorlast/length(y)]; 
-         
          fprintf('.');
          if rem(iteration, 100) == 0 % progressing indicator
              fprintf('\n');
          end
          paraOrder = randperm(length(paraGuess));
-         for i = paraOrder % scan each parameter with random order        
-         %for i = 1:length(paraGuess) % scan each parameter in original order
+         for i = paraOrder % scan each parameter
              %set the scanning scale withing the boundary.
             p = para(i);
-%             if abs(p) > precision
-%                 precision = abs(p)*precision;
+%             if abs(p) > option.precision
+%                 precision = abs(p)*option.precision;
+%             else
+%                 precision = option.precision;
 %             end
             precision = (abs(p)+precisionS)*precisionS;
             lb = bounds(1, i);
@@ -207,33 +231,47 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, 
             nl = floor(log2(ll/precision+1)):-step:1;
             ul = ub-p;
             nu = 1:step:floor(log2(ul/precision+1));
-            ps = [p, lb, p-2.^nl*precision, p+2.^nu*precision, ub];
-            error = zeros(length(ps),1);
+            ps = [lb, p-2.^nl*precision, p+2.^nu*precision, ub]; 
+            error = inf(length(ps),1);
              % scan the parameter across the scale
-             for j = 1: length(ps)
+            for j = 1: length(ps)
                 para(i) = ps(j);
-                residual = y - mdl(para,x);
-                %error(j) = sum((mdl(para, x)-y).^2); %---the key equation: sum square of residual
-                % error(j) = dot(residual, residual); % square residual, dot() is ~5% faster than sum()
-                error(j) = sum(abs(residual(:))); % L1 norm
+                try
+                    residual = y - mdl(para,x);
+                    %error(j) = sum((mdl(para, x)-y).^2); %---the key equation: sum square of residual
+                    %error(j) = dot(residual, residual); % square residual, dot() is ~5% faster than sum()
+                    error(j) = sum(abs(residual(:))); % L1 norm
+                catch ME
+                    errorcount = errorcount + 1;
+                end
              end
              % find the best
              [minerror, ind] = min(error); % find the least square.
-             para(i) = ps(ind(1)); % if there are multiple minima, take the first, could be p.
+             if minerror < errorpara
+                 para(i) = ps(ind(1));
+                 errorpara = minerror;
+             else
+                 para(i) = p;
+             end
          end
          %test if converged
-         if abs(minerror-minerrorlast)< convgtest; %convergence test positive
+         if (minerrorlast-errorpara) < convgtest  %convergence test positive
              fprintf(['\n converged at iteration = ', num2str(iteration)]);
              break
          end
-         minerrorlast = minerror;
+         minerrorlast = errorpara;
+         paraHist(iteration+1,:) = para; 
+         errorHist(iteration+1, 1) = minerrorlast/length(y);
      end
-     fprintf('\n');
- 
+    fprintf('\n');
+    
+
+
      parafinal = para;
 
-     [paraBounds_95, chisq, rsq] = finderror(mdl, x, y, parafinal, bounds, option.precision);
-     toc
+    [paraBounds_95, chisq, rsq] = finderror(mdl, x, y, parafinal, bounds, option.precision);
+    
+    toc
 %-------------Note out the figure plotting or cut it to main function if
 %-------------you don't like it here:
 %     % plot figures 
@@ -247,7 +285,11 @@ function [paraHist, parafinal, paraBounds_95, chisq, rsq] = jcfit_L1(mdl, x, y, 
 %     ax.FontName = 'Arial';
 %     ax.FontSize = 20;
 %     ax.FontWeight = 'Bold';
-%--------end plotting figure    
+%--------end plotting figure 
+    yfit = mdl(parafinal, x);
+    residual = y - yfit;
+    Results = struct('paraHist', paraHist, 'parafinal', parafinal, 'paraBounds_95', paraBounds_95,...
+        'chisq', chisq, 'rsq', rsq, 'x', x, 'y', y, 'yfit', yfit, 'residual', residual, 'errorHist', errorHist);
 end
 
 %% find errors of the fitting
@@ -257,102 +299,103 @@ function [paraBounds_95, chisq, rsq] = finderror(mdl, x, y, para, bounds, precis
 % error structure: upper error and lower error. Take the average as the
 % final for 1 sigma.
 %precision = precision*10;
-     num_para = length(para);
 
-     yfit =  mdl(para, x);
+num_para = length(para);
 
-     residual = y - yfit;
-     a = (y - yfit).^2./yfit;
-     a(isinf(a)) = 0;
-     chisq = sum(a);
-     meany = mean(y);
-     sumy =  sum((y-meany).^2);
-     N =  length(x);
+ yfit =  mdl(para, x);
+ 
+ residual = y - yfit;
+ a = (y - yfit).^2./yfit;
+ a(isinf(a)) = 0;
+ chisq = sum(a);
+ meany = mean(y);
+ sumy =  sum((y-meany).^2);
+ N =  length(x);
 
+ 
+sumr = sum(residual(:).^2);
+rsq = 1- sumr/sumy;
 
-    sumr = sum(residual(:).^2);
-    rsq = 1- sumr/sumy;
+sigma = sqrt(sumr/N);
+% meanrsd = mean(residual(:));
 
-    sigma = sqrt(sumr/N);
-    % meanrsd = mean(residual(:));
+% upper bounds
+% usigma = zeros(num_para);
+upbounds = zeros(num_para, 1);
+lowbounds = zeros(num_para, 1);
+error = zeros(num_para, 2);
 
-    % upper bounds
-    % usigma = zeros(num_para);
-    upbounds = zeros(num_para, 1);
-    lowbounds = zeros(num_para, 1);
-    error = zeros(num_para, 2);
+for i = 1: num_para
+    parau = para;
+    p = parau(i);
+    precision = (abs(p) + precisionS)*precisionS; 
+    ub = bounds(2,i);
+    ul = ub-p;
+    nu = 1:0.2:floor(log2(ul/precision+1));
+    psu = [p, p+2.^nu*precision, ub];
+    sigmau = zeros(length(psu),1);
+    for f = 1: length(psu)
+       parau(i) = psu(f);
+     %   esqu(i) = 0;
 
-    for i = 1: num_para
-        parau = para;
-        p = parau(i);
-        precision = (abs(p)+precisionS)*precisionS;
-        ub = bounds(2,i);
-        ul = ub-p;
-        nu = 1:0.2:floor(log2(ul/precision+1));
-        psu = [p, p+2.^nu*precision, ub];
-        sigmau = zeros(length(psu),1);
-        for f = 1: length(psu)
-           parau(i) = psu(f);
-         %   esqu(i) = 0;
-
-          yfitu = mdl(parau, x);
-
-          %%% -------------------- use y + y_error as upper limit if y_error is
-          %%% avaailable (this idea needs reference and justification):    
-          residualu =  y - yfitu;
-     %     residualu = y+y_error - yfitu; %------------------------
-           %    esqu(i) = esqu(i) + sum((yfitu{j} -y).^2);
-          sigmau(f) = sqrt(sum(residualu(:).^2)/N);
-        end
-        a = abs(sigmau - sigma);
-        b1 = abs(a - 1*sigma/sqrt(N-num_para)); % 66% confidence level 1 sigma
-        b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
-        [~, ind1] = min(b1);
-        [~, ind2] = min(b2);
-        upbounds(i) = psu(ind2(1));         % 2 sigma 95 confidence upper bounds
-        error(i,1) = psu(ind1(1))-para(i); % 1 sigma error upper bound 66% confidence
-
-     end
-
-    %usigma = sigma*precision./abs(sigmau-sigma);%/sqrt(N-num_para);
-
-
-    for i = 1: num_para
-        paral = para;
-        p = paral(i);
-        precision = (abs(p)+precisionS)*precisionS;
-        lb = bounds(1,i);
-        ll = p-lb;
-        nl = floor(log2(ll/precision+1)):-0.2:1;
-        psl = [lb, p-2.^nl*precision, p];
-        sigmal = zeros(length(psl),1);
-        for f = 1: length(psl)
-           paral(i) = psl(f);
-         %   esqu(i) = 0;
-
-          yfitl =  mdl(paral, x);
-           %%% -------------------- use y - y_error as upper limit if y_error is
-          %%% avaailable to calculate resitual (this idea needs reference and justification): 
-          residuall =  y - yfitl;
-      %     residualu = y - y_error - yfitu; %----------------------------
-          sigmal(f) = sqrt(sum(residuall(:).^2)/N);
-        end
-        a = abs(sigmal - sigma);
-        b1 = abs(a - 1*sigma/sqrt(N-num_para)); % 66% confidence level 1 sigma
-        b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
-        [~, ind1] = min(b1);
-        [~, ind2] = min(b2);
-        lowbounds(i) = psl(ind2(1));          % 2 sigma 95 confidence lower bounds
-        error(i,2) = para(i) - psl(ind1(1));  % 1 sigma  error lower bounds 66% confidence
+      yfitu = mdl(parau, x);
+   
+      %%% -------------------- use y + y_error as upper limit if y_error is
+      %%% avaailable (this idea needs reference and justification):    
+      residualu =  y - yfitu;
+ %     residualu = y+y_error - yfitu; %------------------------
+       %    esqu(i) = esqu(i) + sum((yfitu{j} -y).^2);
+      sigmau(f) = sqrt(sum(residualu(:).^2)/N);
     end
+    a = abs(sigmau - sigma);
+    b1 = abs(a - 1*sigma/sqrt(N-num_para)); % 66% confidence level 1 sigma
+    b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
+    [~, ind1] = min(b1);
+    [~, ind2] = min(b2);
+    upbounds(i) = psu(ind2(1));         % 2 sigma 95 confidence upper bounds
+    error(i,1) = psu(ind1(1))-para(i); % 1 sigma error upper bound 66% confidence
+  
+ end
 
-    %----
-    % lower and upper bounds of the parameters at 95% confidence or 2 sigma of the final noise.
-    paraBounds_95 = [lowbounds(:)'; upbounds(:)']; 
-        % warning: the parameter 95% confidence lower and upper bounds are based on estimation of the local minimum,
-        % not considering global minimum and other local minima.
-    %------
-    % parafinal2 = [para; lowbounds; upbounds];
+%usigma = sigma*precision./abs(sigmau-sigma);%/sqrt(N-num_para);
+
+
+for i = 1: num_para
+    paral = para;
+    p = paral(i);
+    precision = (abs(p)+precisionS)*precisionS;
+    lb = bounds(1,i);
+    ll = p-lb;
+    nl = floor(log2(ll/precision+1)):-0.2:1;
+    psl = [lb, p-2.^nl*precision, p];
+    sigmal = zeros(length(psl),1);
+    for f = 1: length(psl)
+       paral(i) = psl(f);
+     %   esqu(i) = 0;
+    
+      yfitl =  mdl(paral, x);
+       %%% -------------------- use y - y_error as upper limit if y_error is
+      %%% avaailable to calculate resitual (this idea needs reference and justification): 
+      residuall =  y - yfitl;
+  %     residualu = y - y_error - yfitu; %----------------------------
+      sigmal(f) = sqrt(sum(residuall(:).^2)/N);
+    end
+    a = abs(sigmal - sigma);
+    b1 = abs(a - 1*sigma/sqrt(N-num_para)); % 66% confidence level 1 sigma
+    b2 = abs(a - 2*sigma/sqrt(N-num_para)); % 95% confidence level 2 sigma
+    [~, ind1] = min(b1);
+    [~, ind2] = min(b2);
+    lowbounds(i) = psl(ind2(1));          % 2 sigma 95 confidence lower bounds
+    error(i,2) = para(i) - psl(ind1(1));  % 1 sigma  error lower bounds 66% confidence
+end
+
+%----
+% lower and upper bounds of the parameters at 95% confidence or 2 sigma of the final noise.
+paraBounds_95 = [lowbounds(:)'; upbounds(:)']; 
+% warning: the parameter 95% confidence lower and upper bounds are based on estimation of the local minimum,
+% not considering global minimum and other local minima.
+%------
+% parafinal2 = [para; lowbounds; upbounds];
 end
 
 % End. by Jixin Chen @ Ohio University
