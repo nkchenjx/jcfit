@@ -228,9 +228,9 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
             lb = bounds(1, i);
             ub = bounds(2, i);
             ll = p-lb;
-            nl = floor(log2(ll/precision+1)):-step:0;
+            nl = floor(log2(ll/precision+1)):-step:1;
             ul = ub-p;
-            nu = 0:step:floor(log2(ul/precision+1));
+            nu = 1:step:floor(log2(ul/precision+1));
             ps = [lb, p-2.^nl*precision, p+2.^nu*precision, ub]; 
             error = inf(length(ps),1);
              % scan the parameter across the scale
@@ -238,7 +238,7 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
                 para(i) = ps(j);
                 try
                     residual = y - mdl(para,x);
-                   % error(j) = sum((mdl(para, x)-y).^2); %---the key equation: sum square of residual
+%                     error(j) = sum((mdl(para, x)-y).^2); %---the key equation: sum square of residual
                     error(j) = dot(residual, residual); % square residual, dot() is ~5% faster than sum()
                 catch ME
                     errorcount = errorcount + 1;
