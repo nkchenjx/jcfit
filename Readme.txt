@@ -2,7 +2,7 @@ Curve fitting for 1D vectors or ND matrix with any given model equations using a
 Codes for Levenberg–Marquardt algorithm have been provided as a comparison.
 Renamed from jcfit to fitnguess 11/2021, stands for Fit with Natrual Guessing.
 Rename back to (Jump-Chain Fitting) jcfit 11/09/2023 and modified searching precision setting from fixed precision to fixed significant figures.
-# A preprint manuscript link: PyJCFit: A Non-Linear Regression Random Search Algorithm for Chemistry Data Fitting, https://doi.org/10.26434/chemrxiv-2023-k9rvm
+
 
 Developed and tested on software versions
 MATLAB 2014b
@@ -29,6 +29,8 @@ This method is modified from the Random Search method especially the Friedman-Sa
 Change your fitting model in the function 'mdl' in 'jcfitf.m' (moved to older versions 11/2021) if you use custom functions for a complicated model or global fitting.
 
 cite:
+A preprint manuscript link: PyJCFit: A Non-Linear Regression Random Search Algorithm for Chemistry Data Fitting, https://doi.org/10.26434/chemrxiv-2023-k9rvm
+
 https://pubs.acs.org/doi/abs/10.1021/acs.jpcb.6b05697
 Jixin Chen, Joseph R Pyle, Kurt Waldo Sy Piecco, Anatoly B Kolomeisky, Christy F Landes, A Two-Step Method for smFRET Data Analysis, J. Phys. Chem. B, 2016, 120 (29), pp 7128–7132
 
