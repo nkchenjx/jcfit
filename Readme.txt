@@ -2,6 +2,7 @@ Curve fitting for 1D vectors or ND matrix with any given model equations using a
 Codes for Levenberg–Marquardt algorithm have been provided as a comparison.
 Renamed from jcfit to fitnguess 11/2021, stands for Fit with Natrual Guessing.
 Rename back to (Jump-Chain Fitting) jcfit 11/09/2023 and modified searching precision setting from fixed precision to fixed significant figures.
+Also update the convergence test procedure.
 
 
 Developed and tested on software versions
