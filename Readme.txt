@@ -1,3 +1,5 @@
+# Paper published: Structured stochastic curve fitting without gradient calculation, https://doi.org/10.1016/j.jcmds.2024.100097 
+
 Curve fitting for 1D vectors or ND matrix with any given model equations using a random search algorithm.
 Codes for Levenberg–Marquardt algorithm have been provided as a comparison.
 Renamed from jcfit to fitnguess 11/2021, stands for Fit with Natrual Guessing.
