@@ -242,7 +242,7 @@ function Results = jcfit_L1(mdl, x, y, paraGuess, bounds, option)
                     %error(j) = dot(residual, residual); % square residual, dot() is ~5% faster than sum()
                     error(j) = sum(abs(residual(:))); % L1 norm
                 catch ME
-                    errorcount = errorcount + 1;
+                    errorCount = errorCount + 1;
                 end
              end
              % find the best
