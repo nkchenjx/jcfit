@@ -241,7 +241,7 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
 %                     error(j) = sum((mdl(para, x)-y).^2); %---the key equation: sum square of residual
                     error(j) = dot(residual, residual); % square residual, dot() is ~5% faster than sum()
                 catch ME
-                    errorcount = errorcount + 1;
+                    errorCount = errorCount + 1;
                 end
              end
              % find the best
