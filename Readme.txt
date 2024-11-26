@@ -55,4 +55,4 @@ where fit_LM_test need provide analytical solution for the Jacobian matrix and f
 Fit_LM_num will automatically calculate the gradient numerically for any given function.
 
 
-by Jixin Chen @ Ohio University 2021
+by Jixin Chen @ Ohio University, Department of Chemistry and Biochemistry 2021
