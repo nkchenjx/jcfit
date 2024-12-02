@@ -216,7 +216,7 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
              fprintf('\n');
          end
          step = rand(1)*(step0(end)-step0(1)) + step0(1); %randomize exponential stepsize if step0 is a 2-element vector.
-         paraOrder = randperm(length(paraGuess));
+         paraOrder = randperm(length(paraGuess)); % randomize searching order of parameters.
          for i = paraOrder % scan each parameter
              %set the scanning scale withing the boundary.
             p = para(i);
