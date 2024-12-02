@@ -187,9 +187,9 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
         convgtest = 1e-10; % difference between two iterations on the square difference between fitting and data.
     end
     if isfield(option,'step')
-        step = option.step;
+        step0 = option.step;
     else
-        step = 0.5; % spacing fraction. Spacing is 2^(step*i)*precision, i is the number of guessing point away from the initial guess.
+        step0 = 0.5; % spacing fraction. Spacing is 2^(step*i)*precision, i is the number of guessing point away from the initial guess.
     end
     
     x = x(:);  y = y(:);  % force column vector for both x and y
@@ -215,6 +215,7 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
          if rem(iteration, 100) == 0 % progressing indicator
              fprintf('\n');
          end
+         step = rand(1)*(step0(end)-step0(1)) + step0(1); %randomize exponential stepsize if step0 is a 2-element vector.
          paraOrder = randperm(length(paraGuess));
          for i = paraOrder % scan each parameter
              %set the scanning scale withing the boundary.
