@@ -256,7 +256,7 @@ function Results = jcfit_L2(mdl, x, y, paraGuess, bounds, option)
          end
          %test if converged
          if (minerrorlast-errorpara) < convgtest  %convergence test positive
-             fprintf(['\n converged at iteration = ', num2str(iteration)]);
+             fprintf(['\n converged or locked at local minima at iteration = ', num2str(iteration)]);
              break
          end
          minerrorlast = errorpara;
